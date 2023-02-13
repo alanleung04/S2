@@ -352,7 +352,15 @@ export class PivotFacet extends BaseFacet {
       return this.getAdaptTreeColWidth(col, colLeafNodes, rowLeafNodes);
     }
     // 4.2 网格自定义
-    const labelWidth = spreadsheet.measureTextWidth(col.label, {});
+    const { formatterMap } = spreadsheet.dataCfg;
+    const { label } = col;
+    // 用真实的showName来计算colLeafNodes的width
+    let showName = label;
+    if (formatterMap?.[label]) {
+      showName = formatterMap[label].alias || label;
+    }
+    // 得到文案宽度
+    const labelWidth = spreadsheet.measureTextWidth(showName, {});
     return this.getAdaptGridColWidth(colLeafNodes, rowHeaderWidth, labelWidth);
   }
 
@@ -726,10 +734,10 @@ export class PivotFacet extends BaseFacet {
     const canvasW = this.getCanvasHW().width;
     const availableWidth = canvasW - this.getSeriesNumberWidth();
 
-    const size = Math.max(1, rowHeaderColSize + colHeaderColSize);
+    const colSize = Math.max(1, rowHeaderColSize + colHeaderColSize);
     if (!rowHeaderWidth) {
       // 如果没有行头，则直接取max(用户定义, 可用宽度 / 数量)
-      return Math.max(getCellWidth(cellCfg), availableWidth / size);
+      return Math.max(getCellWidth(cellCfg), availableWidth / colSize);
     }
 
     // 考虑列头的icon情况，处理有icon的时候，header会出现省略号的问题
