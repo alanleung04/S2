@@ -39,11 +39,11 @@ export const buildGridHierarchy = (params: GridHeaderParams) => {
   } = params;
 
   const index = fields.indexOf(currentField);
-
   const { dataSet, values, spreadsheet } = facetCfg;
   const fieldValues: FieldValue[] = [];
 
   let query = {};
+  // 小计
   if (parentNode.isTotals) {
     // add total measures
     if (addTotalMeasureInTotal) {
@@ -54,7 +54,6 @@ export const buildGridHierarchy = (params: GridHeaderParams) => {
   } else {
     // field(dimension)'s all values
     query = getDimsCondition(parentNode, true);
-
     const dimValues = dataSet.getDimensionValues(currentField, query);
 
     const arrangedValues = layoutArrange(

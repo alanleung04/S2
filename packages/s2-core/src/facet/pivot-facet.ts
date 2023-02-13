@@ -54,7 +54,6 @@ export class PivotFacet extends BaseFacet {
         isRowHeader: false,
         facetCfg: this.cfg,
       });
-
     // 2、calculate all related nodes coordinate
     this.calculateNodesCoordinate(
       rowLeafNodes,
@@ -725,9 +724,11 @@ export class PivotFacet extends BaseFacet {
       return Math.max(getCellWidth(cellCfg), availableWidth / size);
     }
 
-    return Math.max(
-      getCellWidth(cellCfg),
-      (availableWidth - rowHeaderWidth) / colHeaderColSize,
+    return (
+      Math.max(
+        getCellWidth(cellCfg),
+        (availableWidth - rowHeaderWidth) / colHeaderColSize,
+      ) + 50
     );
   }
 

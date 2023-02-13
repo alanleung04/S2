@@ -88,6 +88,7 @@ const handleTreeRowHierarchy = (params: HeaderParams) => {
 const handleRowHeaderHierarchy = (params: HeaderParams) => {
   // 只有透视表有行头
   const { spreadsheet } = params;
+  // 树形
   if (spreadsheet.isHierarchyTreeType()) {
     handleTreeRowHierarchy(params);
   } else {

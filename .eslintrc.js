@@ -50,7 +50,7 @@ module.exports = {
     'import/no-default-export': 0,
     'no-restricted-syntax': 0,
     semi: 0,
-    'no-console': 2,
+    'no-console': 0,
     'consistent-return': 0,
     'import/no-extraneous-dependencies': 2,
     'import/prefer-default-export': 0,
