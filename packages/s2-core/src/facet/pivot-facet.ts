@@ -55,6 +55,7 @@ export class PivotFacet extends BaseFacet {
         facetCfg: this.cfg,
       });
     // 2、calculate all related nodes coordinate
+    // console.log('colsHierarchy', rowsHierarchy);
     this.calculateNodesCoordinate(
       rowLeafNodes,
       rowsHierarchy,
@@ -255,7 +256,7 @@ export class PivotFacet extends BaseFacet {
     rowLeafNodes: Node[],
     rowHeaderWidth: number,
   ): number {
-    const { colCfg, dataSet, filterDisplayDataItem } = this.cfg;
+    const { colCfg, dataSet, filterDisplayDataItem, spreadsheet } = this.cfg;
     const cellDraggedWidth = this.getCellDraggedWidth(col);
 
     // 1. 拖拽后的宽度优先级最高
@@ -351,7 +352,8 @@ export class PivotFacet extends BaseFacet {
       return this.getAdaptTreeColWidth(col, colLeafNodes, rowLeafNodes);
     }
     // 4.2 网格自定义
-    return this.getAdaptGridColWidth(colLeafNodes, rowHeaderWidth);
+    const labelWidth = spreadsheet.measureTextWidth(col.label, {});
+    return this.getAdaptGridColWidth(colLeafNodes, rowHeaderWidth, labelWidth);
   }
 
   private getColNodeHeight(col: Node) {
@@ -712,8 +714,13 @@ export class PivotFacet extends BaseFacet {
    *  计算平铺模式等宽条件下的列宽
    * @returns number
    */
-  private getAdaptGridColWidth(colLeafNodes: Node[], rowHeaderWidth?: number) {
-    const { rows, cellCfg } = this.cfg;
+  private getAdaptGridColWidth(
+    colLeafNodes: Node[],
+    rowHeaderWidth?: number,
+    labelWidth = 0,
+  ) {
+    const { rows, cellCfg, spreadsheet } = this.cfg;
+    const { icon: colIconStyle } = spreadsheet.theme.colCell;
     const rowHeaderColSize = rows.length;
     const colHeaderColSize = colLeafNodes.length;
     const canvasW = this.getCanvasHW().width;
@@ -721,14 +728,24 @@ export class PivotFacet extends BaseFacet {
 
     const size = Math.max(1, rowHeaderColSize + colHeaderColSize);
     if (!rowHeaderWidth) {
+      // 如果没有行头，则直接取max(用户定义, 可用宽度 / 数量)
       return Math.max(getCellWidth(cellCfg), availableWidth / size);
     }
 
+    // 考虑列头的icon情况，处理有icon的时候，header会出现省略号的问题
+    const iconWidth = this.getExpectedCellIconWidth(
+      CellTypes.COL_CELL,
+      false,
+      colIconStyle,
+    );
+    // 宽度取：
+    // 主题宽度，dom节点计算宽度，文字宽度 + padding 中的最大值
     return (
       Math.max(
         getCellWidth(cellCfg),
         (availableWidth - rowHeaderWidth) / colHeaderColSize,
-      ) + 50
+        labelWidth + 24,
+      ) + iconWidth
     );
   }
 
