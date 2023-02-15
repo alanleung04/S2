@@ -748,12 +748,10 @@ export class PivotFacet extends BaseFacet {
     );
     // 宽度取：
     // 主题宽度，dom节点计算宽度，文字宽度 + padding 中的最大值
-    return (
-      Math.max(
-        getCellWidth(cellCfg),
-        (availableWidth - rowHeaderWidth) / colHeaderColSize,
-        labelWidth + 24,
-      ) + iconWidth
+    return Math.max(
+      getCellWidth(cellCfg) + iconWidth,
+      (availableWidth - rowHeaderWidth) / colHeaderColSize,
+      labelWidth + 24 + iconWidth,
     );
   }
 
