@@ -505,13 +505,23 @@ export const copyData = (
     });
   }
 
+  const { formatterMap } = sheetInstance.dataCfg;
+
   const headerRow = headers
     .map((header) => {
       const emptyLength = maxRowLength - header.length;
       if (emptyLength > 0) {
         header.unshift(...new Array(emptyLength));
       }
-      return header.map((h) => getCsvString(h)).join(split);
+      return header
+        .map((h) => {
+          if (formatterMap?.[h]) {
+            const label = formatterMap?.[h].alias || h;
+            return getCsvString(label);
+          }
+          return getCsvString(h);
+        })
+        .join(split);
     })
     .join('\r\n');
 
